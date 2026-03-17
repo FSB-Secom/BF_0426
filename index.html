@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bolsa Família — Março de 2026</title>
+  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+  <style>
+    :root{
+      --bg:#e7e7e7;
+      --text:#111111;
+      --muted:#5f5f5f;
+      --line:#cfc9c0;
+      --card-shadow:0 6px 20px rgba(0,0,0,.08);
+
+      --norte:#c8ec8e;
+      --nordeste:#f5c074;
+      --centro:#efe1a1;
+      --sudeste:#efb6c7;
+      --sul:#aebff2;
+
+      --card-verde:#86be43;
+      --card-amarelo:#f4cf19;
+      --card-azul:#556cb4;
+      --card-vermelho:#ef1f2d;
+    }
+
+    *{ box-sizing:border-box; }
+
+    body{
+      margin:0;
+      font-family: Arial, Helvetica, sans-serif;
+      background:var(--bg);
+      color:var(--text);
+    }
+
+    .bf-dashboard{
+      max-width:1100px;
+      margin:0 auto;
+      padding:24px;
+    }
+
+    .bf-top{
+      display:grid;
+      grid-template-columns:340px 1fr;
+      gap:24px;
+      align-items:start;
+      margin-bottom:26px;
+    }
+
+    .bf-brand{
+      padding-top:4px;
+    }
+
+    .bf-logo-box{
+      width:100%;
+      max-width:280px;
+    }
+
+    .bf-logo-box img{
+      width:100%;
+      display:block;
+      height:auto;
+    }
+
+    .bf-logo-fallback{
+      width:100%;
+      max-width:280px;
+      min-height:150px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border:2px dashed #999;
+      border-radius:14px;
+      background:#fff;
+      text-align:center;
+      font-weight:700;
+      padding:16px;
+      line-height:1.25;
+    }
+
+    .bf-month{
+      margin:0px 10 0;
+      font-size:34px;
+      font-weight:900;
+      line-height:1;
+      color:#5168b3;
+      text-transform:uppercase;
+    }
+
+    .bf-highlight{
+  min-height:228px;
+  border:2px solid #222;
+  border-radius:22px;
+  background: url("GettyImages-1490771867 (1).jpg") center/cover no-repeat;
+}
+
+    .bf-summary{
+      display:grid;
+      grid-template-columns:repeat(4, 1fr);
+      gap:28px;
+      margin-bottom:24px;
+    }
+
+    .bf-card{
+      position:relative;
+      border-radius:14px;
+      min-height:180px;
+      padding:62px 20px 20px;
+      text-align:center;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .bf-card-circle{
+      position:absolute;
+      top:-26px;
+      left:50%;
+      transform:translateX(-50%);
+      width:98px;
+      height:98px;
+      border-radius:999px;
+      background:#fff;
+      border:2px solid #222;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:42px;
+    }
+
+    .bf-card-circle img{
+  width:60%;
+  height:60%;
+  object-fit:contain;
+  display:block;
+}
+
+    .bf-card-content strong{
+      display:block;
+      font-size:30px;
+      line-height:1.05;
+      margin:8px 0px 10px ;
+      font-weight:900;
+    }
+
+    .bf-card-content span{
+      display:block;
+      font-size:21px;
+      line-height:1.08;
+    }
+
+    .bf-green{ background:var(--card-verde); color:#fff; }
+    .bf-yellow{ background:var(--card-amarelo); color:#000; }
+    .bf-blue{ background:var(--card-azul); color:#fff; }
+    .bf-red{ background:var(--card-vermelho); color:#fff; }
+
+    .bf-main{
+      display:grid;
+      grid-template-columns:1.08fr 0.92fr;
+      gap:14px;
+      margin-bottom:14px;
+      align-items:start;
+    }
+
+    .bf-box{
+      border:2px solid #222;
+      border-radius:18px;
+      overflow:hidden;
+    }
+
+    .bf-map-box{
+      background:#f1eee4;
+      padding:14px;
+    }
+
+    .bf-title{
+      margin:0 0 16px;
+      text-align:center;
+      font-size:28px;
+      font-weight:900;
+    }
+
+    .bf-region-tabs{
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:center;
+      gap:10px;
+      margin-bottom:16px;
+    }
+
+    .bf-region-tabs button{
+      border:1.5px solid #222;
+      border-radius:8px;
+      padding:6px 12px;
+      font-size:16px;
+      line-height:1;
+      cursor:pointer;
+      font-weight:700;
+      transition:.2s ease;
+      color:#111;
+    }
+
+    .bf-region-tabs button:hover{
+      transform:translateY(-1px);
+      opacity:.92;
+    }
+
+    .bf-region-tabs button.active{
+      background:#111 !important;
+      color:#fff;
+    }
+
+    .reg-todas{ background:#ddd7cd; }
+    .reg-norte{ background:var(--norte); }
+    .reg-nordeste{ background:var(--nordeste); }
+    .reg-centro{ background:var(--centro); }
+    .reg-sudeste{ background:var(--sudeste); }
+    .reg-sul{ background:var(--sul); }
+
+    .bf-map-area{
+      width:100%;
+      min-height:580px;
+      border-radius:12px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:10px;
+      overflow:hidden;
+      background:#ece7dd;
+    }
+
+    #map{
+      width:100%;
+      height:auto;
+      display:block;
+    }
+
+    .bf-legend{
+      display:grid;
+      grid-template-columns:repeat(5, minmax(0,1fr));
+      gap:10px;
+      margin-top:16px;
+    }
+
+    .bf-legend-item{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px 12px;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      font-size:13px;
+      font-weight:700;
+    }
+
+    .bf-dot{
+      width:14px;
+      height:14px;
+      border-radius:50%;
+      flex:0 0 14px;
+    }
+
+    .bf-side{
+      display:grid;
+      grid-template-rows:auto auto;
+      gap:14px;
+    }
+
+    .bf-region-box{
+      background:#aebcf3;
+      padding:14px;
+    }
+
+    .bf-state-box{
+      background:#f1eee4;
+      padding:14px;
+    }
+
+    .bf-side-title{
+      margin:0 0 10px;
+      text-align:center;
+      font-size:28px;
+      font-weight:900;
+    }
+
+    .bf-big-name{
+      margin:0 0 18px;
+      text-align:center;
+      font-size:38px;
+      line-height:1.05;
+      font-weight:900;
+    }
+
+    .bf-info-card{
+      background:#fff;
+      border:2px solid #222;
+      border-radius:16px;
+      padding:12px 18px;
+      text-align:center;
+      margin-bottom:14px;
+    }
+
+    .bf-info-card:last-child{
+      margin-bottom:0;
+    }
+
+    .bf-info-label{
+      font-size:17px;
+      margin-bottom:4px;
+    }
+
+    .bf-info-number{
+      font-size:38px;
+      line-height:1.05;
+      font-weight:900;
+      margin-bottom:4px;
+    }
+
+    .bf-info-sub{
+      font-size:15px;
+      line-height:1.2;
+    }
+
+    .bf-bottom{
+      display:grid;
+      grid-template-columns:1.08fr 0.92fr;
+      gap:14px;
+    }
+
+    .bf-tip{
+      background:#c8ec8e;
+      padding:24px 26px;
+      display:flex;
+      align-items:center;
+      gap:18px;
+      min-height:170px;
+    }
+
+    .bf-tip-icon{
+      font-size:76px;
+      line-height:1;
+      flex:0 0 auto;
+    }
+
+    .bf-tip-icon img{
+  width:70px;
+  height:70px;
+  object-fit:contain;
+  display:block;
+}
+
+    .bf-tip-text{
+      font-size:34px;
+      line-height:1.05;
+      font-weight:900;
+    }
+
+    .bf-gov{
+      background:#fff;
+      min-height:170px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+    }
+
+    .bf-gov img{
+      max-width:380px;
+      width:100%;
+      height:auto;
+      display:block;
+    }
+
+    .bf-gov-fallback{
+      width:100%;
+      max-width:300px;
+      min-height:100px;
+      border:2px dashed #999;
+      border-radius:14px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      padding:16px;
+      font-weight:700;
+      background:#fff;
+      line-height:1.25;
+    }
+
+    .tooltip{
+      position:fixed;
+      pointer-events:none;
+      background:#111;
+      color:#fff;
+      padding:10px 12px;
+      border-radius:12px;
+      font-size:13px;
+      line-height:1.3;
+      box-shadow:0 10px 24px rgba(0,0,0,.18);
+      opacity:0;
+      transform:translateY(6px);
+      transition:opacity .15s ease, transform .15s ease;
+      z-index:50;
+      max-width:220px;
+    }
+
+    .tooltip.show{
+      opacity:1;
+      transform:translateY(0);
+    }
+
+    .state{
+      cursor:pointer;
+      transition:opacity .18s ease, transform .18s ease, filter .18s ease;
+      transform-box:fill-box;
+      transform-origin:center;
+    }
+
+    .state:hover{
+      filter:brightness(1.05);
+    }
+
+    .state.dimmed{
+      opacity:.28;
+    }
+
+    .state.selected{
+      stroke:#111 !important;
+      stroke-width:2.5 !important;
+      filter:drop-shadow(0 0 8px rgba(0,0,0,.18));
+    }
+
+    .state-label{
+      font-size:11px;
+      font-weight:700;
+      text-anchor:middle;
+      fill:#2f2f2f;
+      pointer-events:none;
+    }
+
+    .empty-note{
+      padding:28px;
+      text-align:center;
+      color:#555;
+      font-weight:700;
+    }
+
+    @media (max-width: 980px){
+      .bf-top,
+      .bf-main,
+      .bf-bottom{
+        grid-template-columns:1fr;
+      }
+
+      .bf-brand{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  text-align:center;
+}
+
+.bf-logo-box{
+  max-width:220px;
+}
+
+.bf-month{
+  text-align:center;
+}
+
+      .bf-summary{
+        grid-template-columns:repeat(2, 1fr);
+      }
+
+      .bf-map-area{
+        min-height:520px;
+      }
+
+      .bf-legend{
+        grid-template-columns:repeat(2, minmax(0,1fr));
+      }
+    }
+
+    @media (max-width: 680px){
+      .bf-dashboard{
+        padding:14px;
+      }
+
+      .bf-summary{
+        grid-template-columns:1fr;
+        gap:18px;
+      }
+
+      .bf-month{
+        font-size:28px;
+      }
+
+      .bf-card-content strong{
+        font-size:30px;
+      }
+
+      .bf-card-content span{
+        font-size:19px;
+      }
+
+      .bf-title,
+      .bf-side-title{
+        font-size:22px;
+      }
+
+      .bf-big-name{
+        font-size:28px;
+      }
+
+      .bf-info-number{
+        font-size:30px;
+      }
+
+      .bf-tip{
+        align-items:flex-start;
+      }
+
+      .bf-tip-icon{
+        font-size:60px;
+      }
+
+      .bf-tip-text{
+        font-size:24px;
+      }
+
+      .bf-map-area{
+        min-height:420px;
+      }
+
+      .bf-legend{
+        grid-template-columns:1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <section class="bf-dashboard">
+    <div class="bf-top">
+      <div class="bf-brand">
+        <div class="bf-logo-box">
+  <img src="BF.png" alt="Programa Bolsa Família">
+</div>
+        <h2 class="bf-month">MARÇO DE 2026</h2>
+      </div>
+
+      <div class="bf-highlight"></div>
+    </div>
+
+    <div class="bf-summary">
+      <div class="bf-card bf-green">
+        <div class="bf-card-circle">
+  <img src="Planejamento Infográfico-02.svg" alt="">
+</div>
+        <div class="bf-card-content">
+          <strong>18,73 mi</strong>
+          <span>de famílias contempladas</span>
+        </div>
+      </div>
+
+      <div class="bf-card bf-yellow">
+        <div class="bf-card-circle">
+  <img src="Planejamento Infográfico-03.svg" alt="">
+</div>
+        <div class="bf-card-content">
+          <strong>R$ 12,76 bi</strong>
+          <span>transferidos pelo Governo do Brasil</span>
+        </div>
+      </div>
+
+      <div class="bf-card bf-blue">
+        <div class="bf-card-circle">
+  <img src="Planejamento Infográfico-05.svg" alt="">
+</div>
+        <div class="bf-card-content">
+          <strong>R$ 683,75</strong>
+          <span>é o valor médio do benefício</span>
+        </div>
+      </div>
+
+      <div class="bf-card bf-red">
+        <div class="bf-card-circle">
+  <img src="Planejamento Infográfico-04.svg" alt="">
+</div>
+        <div class="bf-card-content">
+          <strong>5.570</strong>
+          <span>municípios atendidos</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="bf-main">
+      <div class="bf-box bf-map-box">
+        <h3 class="bf-title">Mapa Navegável</h3>
+
+        <div class="bf-region-tabs" id="filters">
+          <button class="reg-norte" data-region="Norte">Norte</button>
+          <button class="reg-nordeste" data-region="Nordeste">Nordeste</button>
+          <button class="reg-centro" data-region="Centro-Oeste">Centro-Oeste</button>
+          <button class="reg-sudeste" data-region="Sudeste">Sudeste</button>
+          <button class="reg-sul" data-region="Sul">Sul</button>
+        </div>
+
+        <div class="bf-map-area" id="mapWrap">
+          <svg id="map" viewBox="0 0 900 760" preserveAspectRatio="xMidYMid meet" aria-label="Mapa do Brasil"></svg>
+        </div>
+
+      </div>
+
+      <div class="bf-side">
+        <div class="bf-box bf-region-box">
+          <h3 class="bf-side-title">Dados - Região</h3>
+          <h2 class="bf-big-name" id="bf-region-name">Brasil</h2>
+
+          <div class="bf-info-card">
+            <div class="bf-info-label">Famílias Contempladas</div>
+            <div class="bf-info-number" id="bf-region-familias">18,73 mi</div>
+            <div class="bf-info-sub" id="bf-region-familias-sub">Total nacional do mês de referência</div>
+          </div>
+
+          <div class="bf-info-card">
+            <div class="bf-info-label">Valor Médio</div>
+            <div class="bf-info-number" id="bf-region-valor">R$ 683,75</div>
+            <div class="bf-info-sub" id="bf-region-valor-sub">Média nacional do benefício</div>
+          </div>
+        </div>
+
+        <div class="bf-box bf-state-box">
+          <h3 class="bf-side-title">Dados - Estado</h3>
+          <h2 class="bf-big-name" id="bf-state-name">Selecione um estado</h2>
+
+          <div class="bf-info-card">
+            <div class="bf-info-label">Famílias Contempladas</div>
+            <div class="bf-info-number" id="bf-state-familias">—</div>
+            <div class="bf-info-sub" id="bf-state-sub">Clique no mapa para ver os dados por UF</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bf-bottom">
+      <div class="bf-box bf-tip">
+        <div class="bf-tip-icon">
+  <img src="61942.png" alt="">
+</div>
+        <div class="bf-tip-text">Para visualizar os dados, selecione um estado ou região.</div>
+      </div>
+
+      <div class="bf-box bf-gov">
+  <img src="Assinatura SECOM_Prancheta 1.jpg" alt="Governo do Brasil">
+</div>
+
+      </div>
+    </div>
+  </section>
+
+  <div class="tooltip" id="tooltip"></div>
+
+  <script>
+    const stateData = {
+      AC:{ estado:"Acre", uf:"AC", familias:"123.244", regiao:"Norte" },
+      AP:{ estado:"Amapá", uf:"AP", familias:"112.628", regiao:"Norte" },
+      AM:{ estado:"Amazonas", uf:"AM", familias:"596.795", regiao:"Norte" },
+      RO:{ estado:"Rondônia", uf:"RO", familias:"125.136", regiao:"Norte" },
+      RR:{ estado:"Roraima", uf:"RR", familias:"74.842", regiao:"Norte" },
+      PA:{ estado:"Pará", uf:"PA", familias:"1.253.994", regiao:"Norte" },
+      TO:{ estado:"Tocantins", uf:"TO", familias:"141.201", regiao:"Norte" },
+
+      AL:{ estado:"Alagoas", uf:"AL", familias:"496.839", regiao:"Nordeste" },
+      BA:{ estado:"Bahia", uf:"BA", familias:"2.330.276", regiao:"Nordeste" },
+      CE:{ estado:"Ceará", uf:"CE", familias:"1.344.565", regiao:"Nordeste" },
+      MA:{ estado:"Maranhão", uf:"MA", familias:"1.150.696", regiao:"Nordeste" },
+      PB:{ estado:"Paraíba", uf:"PB", familias:"616.874", regiao:"Nordeste" },
+      PE:{ estado:"Pernambuco", uf:"PE", familias:"1.465.176", regiao:"Nordeste" },
+      PI:{ estado:"Piauí", uf:"PI", familias:"543.839", regiao:"Nordeste" },
+      RN:{ estado:"Rio Grande do Norte", uf:"RN", familias:"463.077", regiao:"Nordeste" },
+      SE:{ estado:"Sergipe", uf:"SE", familias:"354.527", regiao:"Nordeste" },
+
+      MT:{ estado:"Mato Grosso", uf:"MT", familias:"212.118", regiao:"Centro-Oeste" },
+      MS:{ estado:"Mato Grosso do Sul", uf:"MS", familias:"178.775", regiao:"Centro-Oeste" },
+      DF:{ estado:"Distrito Federal", uf:"DF", familias:"152.534", regiao:"Centro-Oeste" },
+      GO:{ estado:"Goiás", uf:"GO", familias:"433.943", regiao:"Centro-Oeste" },
+
+      ES:{ estado:"Espírito Santo", uf:"ES", familias:"279.193", regiao:"Sudeste" },
+      MG:{ estado:"Minas Gerais", uf:"MG", familias:"1.416.725", regiao:"Sudeste" },
+      RJ:{ estado:"Rio de Janeiro", uf:"RJ", familias:"1.400.902", regiao:"Sudeste" },
+      SP:{ estado:"São Paulo", uf:"SP", familias:"2.203.223", regiao:"Sudeste" },
+
+      PR:{ estado:"Paraná", uf:"PR", familias:"546.687", regiao:"Sul" },
+      RS:{ estado:"Rio Grande do Sul", uf:"RS", familias:"519.749", regiao:"Sul" },
+      SC:{ estado:"Santa Catarina", uf:"SC", familias:"201.518", regiao:"Sul" }
+    };
+
+    const regionData = {
+      "Norte": { familias:"2,42 milhões", media:"R$ 716,69", color:"#c8ec8e" },
+      "Nordeste": { familias:"8,76 milhões", media:"R$ 677,60", color:"#f5c074" },
+      "Centro-Oeste": { familias:"977,3 mil", media:"R$ 693,08", color:"#efe1a1" },
+      "Sudeste": { familias:"5,3 milhões", media:"R$ 678,06", color:"#efb6c7" },
+      "Sul": { familias:"1,26 milhão", media:"R$ 679,59", color:"#aebff2" }
+    };
+
+    const regionColors = {
+      "Norte":"#c8ec8e",
+      "Nordeste":"#f5c074",
+      "Centro-Oeste":"#efe1a1",
+      "Sudeste":"#efb6c7",
+      "Sul":"#aebff2"
+    };
+
+    const nameToUF = {
+      "Rondônia":"RO","Acre":"AC","Amazonas":"AM","Roraima":"RR","Pará":"PA","Amapá":"AP","Tocantins":"TO",
+      "Maranhão":"MA","Piauí":"PI","Ceará":"CE","Rio Grande do Norte":"RN","Paraíba":"PB","Pernambuco":"PE","Alagoas":"AL","Sergipe":"SE","Bahia":"BA",
+      "Mato Grosso do Sul":"MS","Mato Grosso":"MT","Goiás":"GO","Distrito Federal":"DF",
+      "Minas Gerais":"MG","Espírito Santo":"ES","Rio de Janeiro":"RJ","São Paulo":"SP",
+      "Paraná":"PR","Santa Catarina":"SC","Rio Grande do Sul":"RS"
+    };
+
+    const NATIONAL = {
+      familias: "18,73 mi",
+      media: "R$ 683,75"
+    };
+
+    const tooltip = document.getElementById("tooltip");
+    const regionName = document.getElementById("bf-region-name");
+    const regionFamilies = document.getElementById("bf-region-familias");
+    const regionFamiliesSub = document.getElementById("bf-region-familias-sub");
+    const regionAverage = document.getElementById("bf-region-valor");
+    const regionAverageSub = document.getElementById("bf-region-valor-sub");
+    const stateName = document.getElementById("bf-state-name");
+    const stateFamilies = document.getElementById("bf-state-familias");
+    const stateSub = document.getElementById("bf-state-sub");
+
+    let selectedUF = null;
+    let activeRegion = "Norte";
+
+    function getUF(feature){
+      const p = feature.properties || {};
+      return (
+        p.sigla ||
+        p.uf ||
+        p.UF ||
+        p.id ||
+        p.codigo_uf ||
+        p.abbrev ||
+        nameToUF[p.name] ||
+        nameToUF[p.nome] ||
+        nameToUF[p.estado] ||
+        null
+      );
+    }
+
+    function updatePanel(uf){
+      if(!uf || !stateData[uf]) return;
+
+      const state = stateData[uf];
+      const region = regionData[state.regiao];
+
+      regionName.textContent = state.regiao;
+      regionFamilies.textContent = region.familias;
+      regionFamiliesSub.textContent = "Famílias contempladas na região";
+      regionAverage.textContent = region.media;
+      regionAverageSub.textContent = "Valor médio na região " + state.regiao;
+
+      stateName.textContent = state.estado;
+      stateFamilies.textContent = state.familias;
+      stateSub.textContent = "Famílias contempladas nesta unidade da federação";
+    }
+
+    function resetPanel(){
+      regionName.textContent = activeRegion === "Todas" ? "Brasil" : activeRegion;
+      regionFamilies.textContent = activeRegion === "Todas" ? NATIONAL.familias : regionData[activeRegion].familias;
+      regionFamiliesSub.textContent = activeRegion === "Todas"
+        ? "Total nacional do mês de referência"
+        : "Famílias contempladas na região";
+
+      regionAverage.textContent = activeRegion === "Todas" ? NATIONAL.media : regionData[activeRegion].media;
+      regionAverageSub.textContent = activeRegion === "Todas"
+        ? "Média nacional do benefício"
+        : "Valor médio na região " + activeRegion;
+
+      stateName.textContent = "Selecione um estado";
+      stateFamilies.textContent = "—";
+      stateSub.textContent = "Clique no mapa para ver os dados por UF";
+    }
+
+    function showTooltip(html, x, y){
+      tooltip.innerHTML = html;
+      tooltip.style.left = (x + 14) + "px";
+      tooltip.style.top = (y + 14) + "px";
+      tooltip.classList.add("show");
+    }
+
+    function hideTooltip(){
+      tooltip.classList.remove("show");
+    }
+
+    function applyFilter(region){
+      activeRegion = region;
+
+      document.querySelectorAll(".bf-region-tabs button").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.region === region);
+      });
+
+      d3.selectAll(".state").each(function(){
+        const el = d3.select(this);
+        const uf = el.attr("data-uf");
+        const state = stateData[uf];
+        if(!state) return;
+
+        if(region === "Todas"){
+          el.classed("dimmed", false);
+        } else {
+          el.classed("dimmed", state.regiao !== region);
+        }
+      });
+
+      if(!selectedUF){
+        resetPanel();
+      }
+    }
+
+    async function drawMap(){
+      const svg = d3.select("#map");
+      const width = 900;
+      const height = 760;
+
+      let geojson;
+      try{
+        geojson = await d3.json("brazil-states.geojson");
+      } catch (error){
+        d3.select("#mapWrap").html('<div class="empty-note">Não consegui carregar o arquivo <strong>brazil-states.geojson</strong>.</div>');
+        console.error(error);
+        return;
+      }
+
+      const features = geojson.features || geojson;
+      if(!features || !features.length){
+        d3.select("#mapWrap").html('<div class="empty-note">O GeoJSON não possui features válidas.</div>');
+        return;
+      }
+
+      const projection = d3.geoMercator().fitSize([width, height], {
+        type:"FeatureCollection",
+        features
+      });
+
+      const path = d3.geoPath(projection);
+      const g = svg.append("g");
+
+      g.selectAll("path")
+        .data(features)
+        .enter()
+        .append("path")
+        .attr("class","state")
+        .attr("data-uf", d => getUF(d))
+        .attr("d", path)
+        .attr("fill", d => {
+          const uf = getUF(d);
+          const region = stateData[uf]?.regiao;
+          return regionColors[region] || "#cccccc";
+        })
+        .attr("stroke", "#ffffff")
+        .attr("stroke-width", 1.5)
+        .on("mouseenter", function(event, d){
+          const uf = getUF(d);
+          if(!stateData[uf]) return;
+
+          const state = stateData[uf];
+          const region = regionData[state.regiao];
+
+          showTooltip(
+            "<strong>" + state.estado + "</strong><br>" +
+            state.familias + " famílias<br>" +
+            state.regiao + "<br>Média regional: <strong>" + region.media + "</strong>",
+            event.clientX,
+            event.clientY
+          );
+
+          if(!selectedUF){
+            updatePanel(uf);
+          }
+        })
+        .on("mousemove", function(event, d){
+          const uf = getUF(d);
+          if(!stateData[uf]) return;
+          tooltip.style.left = (event.clientX + 14) + "px";
+          tooltip.style.top = (event.clientY + 14) + "px";
+        })
+        .on("mouseleave", function(){
+          hideTooltip();
+          if(!selectedUF){
+            resetPanel();
+          }
+        })
+        .on("click", function(event, d){
+          const uf = getUF(d);
+          if(!stateData[uf]) return;
+
+          selectedUF = uf;
+          d3.selectAll(".state").classed("selected", false);
+          d3.select(this).classed("selected", true);
+          updatePanel(uf);
+        });
+
+      g.selectAll("text")
+        .data(features)
+        .enter()
+        .append("text")
+        .attr("class","state-label")
+        .attr("x", d => path.centroid(d)[0])
+        .attr("y", d => path.centroid(d)[1])
+        .text(d => {
+          const uf = getUF(d);
+          return uf || "";
+        });
+
+      applyFilter("Norte");
+      resetPanel();
+    }
+
+    document.getElementById("filters").addEventListener("click", (e) => {
+      const btn = e.target.closest("button[data-region]");
+      if(!btn) return;
+
+      applyFilter(btn.dataset.region);
+    });
+
+    drawMap();
+  </script>
+</body>
+</html>
