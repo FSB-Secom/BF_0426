@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bolsa Família — Março de 2026</title>
+  <title>Bolsa Família — Abril de 2026</title>
   <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -562,7 +562,7 @@
         <div class="bf-logo-box">
   <img src="bf.png" alt="Programa Bolsa Família">
 </div>
-        <h2 class="bf-month">MARÇO DE 2026</h2>
+        <h2 class="bf-month">ABRIL DE 2026</h2>
       </div>
 
       <div class="bf-highlight"></div>
@@ -574,8 +574,8 @@
   <img src="Planejamento Infográfico-02.svg" alt="">
 </div>
         <div class="bf-card-content">
-          <strong>18,73 mi</strong>
-          <span>de famílias contempladas</span>
+          <strong>18,92 mi</strong>
+           <span>de famílias contempladas</span>
         </div>
       </div>
 
@@ -584,8 +584,8 @@
   <img src="Planejamento Infográfico-03.svg" alt="">
 </div>
         <div class="bf-card-content">
-          <strong>R$ 12,76 bi</strong>
-          <span>transferidos pelo Governo do Brasil</span>
+          <strong>R$ 12,8 bi</strong>
+           <span>transferidos pelo Governo do Brasil</span>
         </div>
       </div>
 
@@ -594,8 +594,8 @@
   <img src="Planejamento Infográfico-05.svg" alt="">
 </div>
         <div class="bf-card-content">
-          <strong>R$ 683,75</strong>
-          <span>é o valor médio do benefício</span>
+          <strong>R$ 678,22</strong>
+            <span>é o valor médio do benefício</span>
         </div>
       </div>
 
@@ -604,8 +604,8 @@
   <img src="Planejamento Infográfico-04.svg" alt="">
 </div>
         <div class="bf-card-content">
-          <strong>5.570</strong>
-          <span>municípios atendidos</span>
+          <strong>5.571</strong>
+           <span>municípios atendidos</span>
         </div>
       </div>
     </div>
@@ -636,13 +636,13 @@
 
           <div class="bf-info-card">
             <div class="bf-info-label">Famílias Contempladas</div>
-            <div class="bf-info-number" id="bf-region-familias">18,73 mi</div>
+            <div class="bf-info-number" id="bf-region-familias">18,92 mi</div>
             <div class="bf-info-sub" id="bf-region-familias-sub">Total nacional do mês de referência</div>
           </div>
 
           <div class="bf-info-card">
             <div class="bf-info-label">Valor Médio</div>
-            <div class="bf-info-number" id="bf-region-valor">R$ 683,75</div>
+            <div class="bf-info-number" id="bf-region-valor">R$ 678,22</div>
             <div class="bf-info-sub" id="bf-region-valor-sub">Média nacional do benefício</div>
           </div>
         </div>
@@ -675,47 +675,47 @@
   <div class="tooltip" id="tooltip"></div>
 
   <script>
-    const stateData = {
-      AC:{ estado:"Acre", uf:"AC", familias:"123.244", regiao:"Norte" },
-      AP:{ estado:"Amapá", uf:"AP", familias:"112.628", regiao:"Norte" },
-      AM:{ estado:"Amazonas", uf:"AM", familias:"596.795", regiao:"Norte" },
-      RO:{ estado:"Rondônia", uf:"RO", familias:"125.136", regiao:"Norte" },
-      RR:{ estado:"Roraima", uf:"RR", familias:"74.842", regiao:"Norte" },
-      PA:{ estado:"Pará", uf:"PA", familias:"1.253.994", regiao:"Norte" },
-      TO:{ estado:"Tocantins", uf:"TO", familias:"141.201", regiao:"Norte" },
+  const stateData = {
+    AC:{ estado:"Acre", uf:"AC", familias:"123.705", regiao:"Norte" },
+    AP:{ estado:"Amapá", uf:"AP", familias:"111.551", regiao:"Norte" },
+    AM:{ estado:"Amazonas", uf:"AM", familias:"598.564", regiao:"Norte" },
+    RO:{ estado:"Rondônia", uf:"RO", familias:"126.634", regiao:"Norte" },
+    RR:{ estado:"Roraima", uf:"RR", familias:"75.267", regiao:"Norte" },
+    PA:{ estado:"Pará", uf:"PA", familias:"1.264.145", regiao:"Norte" },
+    TO:{ estado:"Tocantins", uf:"TO", familias:"142.895", regiao:"Norte" },
 
-      AL:{ estado:"Alagoas", uf:"AL", familias:"496.839", regiao:"Nordeste" },
-      BA:{ estado:"Bahia", uf:"BA", familias:"2.330.276", regiao:"Nordeste" },
-      CE:{ estado:"Ceará", uf:"CE", familias:"1.344.565", regiao:"Nordeste" },
-      MA:{ estado:"Maranhão", uf:"MA", familias:"1.150.696", regiao:"Nordeste" },
-      PB:{ estado:"Paraíba", uf:"PB", familias:"616.874", regiao:"Nordeste" },
-      PE:{ estado:"Pernambuco", uf:"PE", familias:"1.465.176", regiao:"Nordeste" },
-      PI:{ estado:"Piauí", uf:"PI", familias:"543.839", regiao:"Nordeste" },
-      RN:{ estado:"Rio Grande do Norte", uf:"RN", familias:"463.077", regiao:"Nordeste" },
-      SE:{ estado:"Sergipe", uf:"SE", familias:"354.527", regiao:"Nordeste" },
+    AL:{ estado:"Alagoas", uf:"AL", familias:"505.485", regiao:"Nordeste" },
+    BA:{ estado:"Bahia", uf:"BA", familias:"2.360.335", regiao:"Nordeste" },
+    CE:{ estado:"Ceará", uf:"CE", familias:"1.353.648", regiao:"Nordeste" },
+    MA:{ estado:"Maranhão", uf:"MA", familias:"1.154.413", regiao:"Nordeste" },
+    PB:{ estado:"Paraíba", uf:"PB", familias:"626.233", regiao:"Nordeste" },
+    PE:{ estado:"Pernambuco", uf:"PE", familias:"1.488.030", regiao:"Nordeste" },
+    PI:{ estado:"Piauí", uf:"PI", familias:"547.537", regiao:"Nordeste" },
+    RN:{ estado:"Rio Grande do Norte", uf:"RN", familias:"465.782", regiao:"Nordeste" },
+    SE:{ estado:"Sergipe", uf:"SE", familias:"360.270", regiao:"Nordeste" },
 
-      MT:{ estado:"Mato Grosso", uf:"MT", familias:"212.118", regiao:"Centro-Oeste" },
-      MS:{ estado:"Mato Grosso do Sul", uf:"MS", familias:"178.775", regiao:"Centro-Oeste" },
-      DF:{ estado:"Distrito Federal", uf:"DF", familias:"152.534", regiao:"Centro-Oeste" },
-      GO:{ estado:"Goiás", uf:"GO", familias:"433.943", regiao:"Centro-Oeste" },
+    MT:{ estado:"Mato Grosso", uf:"MT", familias:"215.219", regiao:"Centro-Oeste" },
+    MS:{ estado:"Mato Grosso do Sul", uf:"MS", familias:"179.180", regiao:"Centro-Oeste" },
+    DF:{ estado:"Distrito Federal", uf:"DF", familias:"152.175", regiao:"Centro-Oeste" },
+    GO:{ estado:"Goiás", uf:"GO", familias:"436.104", regiao:"Centro-Oeste" },
 
-      ES:{ estado:"Espírito Santo", uf:"ES", familias:"279.193", regiao:"Sudeste" },
-      MG:{ estado:"Minas Gerais", uf:"MG", familias:"1.416.725", regiao:"Sudeste" },
-      RJ:{ estado:"Rio de Janeiro", uf:"RJ", familias:"1.400.902", regiao:"Sudeste" },
-      SP:{ estado:"São Paulo", uf:"SP", familias:"2.203.223", regiao:"Sudeste" },
+    ES:{ estado:"Espírito Santo", uf:"ES", familias:"281.263", regiao:"Sudeste" },
+    MG:{ estado:"Minas Gerais", uf:"MG", familias:"1.444.001", regiao:"Sudeste" },
+    RJ:{ estado:"Rio de Janeiro", uf:"RJ", familias:"1.401.468", regiao:"Sudeste" },
+    SP:{ estado:"São Paulo", uf:"SP", familias:"2.226.419", regiao:"Sudeste" },
 
-      PR:{ estado:"Paraná", uf:"PR", familias:"546.687", regiao:"Sul" },
-      RS:{ estado:"Rio Grande do Sul", uf:"RS", familias:"519.749", regiao:"Sul" },
-      SC:{ estado:"Santa Catarina", uf:"SC", familias:"201.518", regiao:"Sul" }
-    };
+    PR:{ estado:"Paraná", uf:"PR", familias:"555.106", regiao:"Sul" },
+    RS:{ estado:"Rio Grande do Sul", uf:"RS", familias:"523.628", regiao:"Sul" },
+    SC:{ estado:"Santa Catarina", uf:"SC", familias:"207.112", regiao:"Sul" }
+  };
 
-    const regionData = {
-      "Norte": { familias:"2,42 milhões", media:"R$ 716,69", color:"#c8ec8e" },
-      "Nordeste": { familias:"8,76 milhões", media:"R$ 677,60", color:"#f5c074" },
-      "Centro-Oeste": { familias:"977,3 mil", media:"R$ 693,08", color:"#efe1a1" },
-      "Sudeste": { familias:"5,3 milhões", media:"R$ 678,06", color:"#efb6c7" },
-      "Sul": { familias:"1,26 milhão", media:"R$ 679,59", color:"#aebff2" }
-    };
+      const regionData = {
+    "Norte": { familias:"2,44 milhões", media:"R$ 709,32", color:"#c8ec8e" },
+    "Nordeste": { familias:"8,86 milhões", media:"R$ 673,57", color:"#f5c074" },
+    "Centro-Oeste": { familias:"982,6 mil", media:"R$ 687,15", color:"#efe1a1" },
+    "Sudeste": { familias:"5,35 milhões", media:"R$ 671,26", color:"#efb6c7" },
+    "Sul": { familias:"1,28 milhão", media:"R$ 673,12", color:"#aebff2" }
+  };
 
     const regionColors = {
       "Norte":"#c8ec8e",
@@ -733,10 +733,10 @@
       "Paraná":"PR","Santa Catarina":"SC","Rio Grande do Sul":"RS"
     };
 
-    const NATIONAL = {
-      familias: "18,73 mi",
-      media: "R$ 683,75"
-    };
+      const NATIONAL = {
+    familias: "18,92 mi",
+    media: "R$ 678,22"
+  };
 
     const tooltip = document.getElementById("tooltip");
     const regionName = document.getElementById("bf-region-name");
